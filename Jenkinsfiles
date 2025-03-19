@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out the code from GitHub repository'
+                git 'https://github.com/your-username/sample-war.git'  // Replace with your repo URL
+            }
+        }
+
+        stage('Build WAR File') {
+            steps {
+                echo 'Building the WAR file using Maven'
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                echo 'Deploying the WAR file to Tomcat'
+                sh 'cp target/sample-war.war /opt/tomcat/webapps/sample-war.war'
+                sh '/opt/tomcat/bin/shutdown.sh'
+                sh '/opt/tomcat/bin/startup.sh'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed!'
+        }
+    }
+}
